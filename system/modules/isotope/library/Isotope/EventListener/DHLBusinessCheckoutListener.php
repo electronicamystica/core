@@ -34,7 +34,10 @@ class DHLBusinessCheckoutListener
 
         $response = $dhl->createShipment();
 
+        log_message(print_r($response, true), 'dhl_business.log');
+
         if (false === $response) {
+            log_message(print_r($dhl->getErrors(), true), 'dhl_business.log');
             return;
         }
 
@@ -42,6 +45,8 @@ class DHLBusinessCheckoutListener
         $data['dhl_shipment_number'] = $response->getShipmentNumber();
         $order->shipping_data = $data;
         $order->save();
+
+        log_message('Shipment Number: '.$response->getShipmentNumber(), 'dhl_business.log');
     }
 
     private function getCredentials(DHLBusiness $shipping)
@@ -54,6 +59,7 @@ class DHLBusinessCheckoutListener
         $credentials->setApiUser($shipping->dhl_app);
         $credentials->setApiPassword($shipping->dhl_token);
 
+        log_message(print_r($credentials, true), 'dhl_business.log');
 
         return $credentials;
     }
